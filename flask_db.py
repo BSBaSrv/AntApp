@@ -30,3 +30,7 @@ class Chat(db.Model):
     user = db.Integer(db.Integer, unique = True, nullable = False)
     text = db.String(db.String, unique = True, nullable = False)
     time = db.String(db.String, unique = True, nullable = False)
+
+#Приколы и проблемы: нужно как-то связать: id(user) и user(chat), id(group) и group(timetable), group_id(user) и id(group).
+#Также, я не уверен в том, что нужно писать db.TypeOfVariable, а не db.Column (как в class User). Ну это короче Константин придумал, так что все вопросы к нему.
+#Если проблема решена - удалите комментарий о ней.
