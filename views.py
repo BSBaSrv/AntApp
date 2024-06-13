@@ -1,5 +1,5 @@
 import requests
-from flask import jsonify
+from flask import jsonify, request
 from core import app
 from models import *
 
@@ -7,17 +7,17 @@ from models import *
 #ЧК Пользователя
 @app.route("/user", methods = ["POST", "GET"])
 def user():
-  if requests.methods == "POST":
-    user_id = requests.form.get()
+  if request.methods == "POST":
+    user_id = request.form.get()
 
   return jsonify(db.session.query(User).get(user_id))
 
 @app.route("/register", methods = ["POST", "GET"])
 def register():
-  if requests.methods == "POST":
-      reg_username = requests.form.get()
-      reg_password = requests.form.get()
-      reg_group_id = requests.form.get()
+  if request.methods == "POST":
+      reg_username = request.form.get()
+      reg_password = request.form.get()
+      reg_group_id = request.form.get()
 
       for num in range(db.session.query(User).order_by(User.id)[-1]):
         if num["username"] == reg_username:
