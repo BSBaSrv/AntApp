@@ -33,9 +33,9 @@ def register():
 
 @app.route("/login", methods = ["POST", "GET"])
 def login():
-  if requests.methods == "POST":
-      log_username = requests.form.get()
-      log_password = requests.form.get()
+  if request.methods == "POST":
+      log_username = request.form.get()
+      log_password = request.form.get()
 
       for num in range(db.session.query(User).order_by(User.id)[-1]):
         if num["username"] == log_username:
@@ -53,14 +53,14 @@ def login():
 #ЧК Группы
 @app.route("/group", methods = ["POST", "GET"])
 def group():
-  if requests.methods == "POST":
+  if request.methods == "POST":
     group_id = requests.form.get()
 
   return jsonify(db.session.query(Group).get(group_id))
 
 @app.route("/timetable", methods = ["POST", "GET"])
 def timetable():
-  if requests.methods == "POST":
+  if request.methods == "POST":
     timetable_id = requests.form.get()
 
   return jsonify(db.session.query(Timetable).get(timetable_id))
