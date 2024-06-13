@@ -1,31 +1,80 @@
+import requests
+from flask import jsonify
 from core import app
+from models import *
 
-# Теперь балбесы ваша задача - сделать простую логику загрузки данных. Конкретно - создать разные страницы, с которых
-# будут возвращаться разные данные в зависимости от параметров запроса
-# Например, chat будет возвращать последние сто сообщений (потом реализуем деление чата на страницы)
-# /timetable/номер_группы - возвращает расписание для группы
-# И так далее
 
-@app.route("/user")
+#ЧК Пользователя
+@app.route("/user", methods = ["POST", "GET"])
 def user():
-  return "Страница пользователя"
+  if requests.methods == "POST":
+    user_id = requests.form.get()
 
-@app.route("/group")
+  return jsonify(db.session.query(User).get(user_id))
+
+@app.route("/register", methods = ["POST", "GET"])
+def register():
+  if requests.methods == "POST":
+      reg_username = requests.form.get()
+      reg_password = requests.form.get()
+      reg_group_id = requests.form.get()
+
+      for num in range(db.session.query(User).order_by(User.id)[-1]):
+        if num["username"] == reg_username:
+          status = False
+        else:
+          db.add(User(username = reg_username, password = reg_password, group_id = reg_group_id))
+          db.commit()
+          status = db.session.query(User).get(User(username = reg_username, password = reg_password, group_id = reg_group_id).id)
+
+  #Если status == False, тo это значит, что пользователь с таким именем уже существует.
+  #Если status == (то, что ввёл пользователь), то это значит, что регистрация прошла успешно (если мы конечно ещё где-то не облажались).
+  return jsonify(status)
+
+@app.route("/login", methods = ["POST", "GET"])
+def login():
+  if requests.methods == "POST":
+      log_username = requests.form.get()
+      log_password = requests.form.get()
+
+      for num in range(db.session.query(User).order_by(User.id)[-1]):
+        if num["username"] == log_username:
+          if db.session.query(User.password).filter_by(username = log_username).one() == log_password:
+            status = db.session.query(User).filter_by(username = log_username).one()
+          else:
+            status = False
+        else:
+          status = False
+
+  #Если status == False, то имя или пароль неправильные.
+  #Если status == (данные из БД), то такие данные есть и пользователю можно дать право использовать эти данные.
+  return jsonify(status)
+
+#ЧК Группы
+@app.route("/group", methods = ["POST", "GET"])
 def group():
-  return "Группы"
+  if requests.methods == "POST":
+    group_id = requests.form.get()
 
-@app.route("/timetable")
+  return jsonify(db.session.query(Group).get(group_id))
+
+@app.route("/timetable", methods = ["POST", "GET"])
 def timetable():
-  return "Расписание"
+  if requests.methods == "POST":
+    timetable_id = requests.form.get()
 
-@app.route("/dictionary")
-def dictionary():
-  return "Словарь"
+  return jsonify(db.session.query(Timetable).get(timetable_id))
 
+#ЧК Социальных инструментов
 @app.route("/chat")
 def chat():
-  return "Чаты"
+  return jsonify("Чат")
 
 @app.route("/workbase")
 def workbase():
-  return "Контрольные работы"
+  return jsonify("Контрольные")
+
+#ЧК Словаря
+@app.route("/dictionary")
+def get_dict():
+  return jsonify(db.session.query(Dictionary).all())

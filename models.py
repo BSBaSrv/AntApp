@@ -3,6 +3,8 @@ from core import db
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique = True, nullable = False)
+    password = db.Column(db.String, nullable = False)
     group_id = db.Column(db.Integer, db.ForeignKey("groups.id"))
     users_from_group = db.relationship("Group", backref = db.backref("users_from_group"))
 
@@ -23,7 +25,9 @@ class Dictionary(db.Model):
     __tablename__ = "dictionary"
     id = db.Column(db.Integer, primary_key = True)
     subject = db.Column(db.String, unique = True, nullable = False)
-    language = db.Column(db.String, unique = True, nullable = False)
+    rus = db.Column(db.String, nullable = False)
+    eng = db.Column(db.String, nullable = False)
+    deu = db.Column(db.String, nullable = False)
     word = db.Column(db.String, unique = True, nullable = False)
 
 class Chat(db.Model):
@@ -33,5 +37,3 @@ class Chat(db.Model):
     text = db.Column(db.String, nullable = False)
     time = db.Column(db.String, nullable = False)
     user_info = db.relationship("User", backref = db.backref("chats"))
-
-# Проблема связей устранена
