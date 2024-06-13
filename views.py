@@ -1,4 +1,3 @@
-import requests
 from flask import jsonify, request
 from core import app
 from models import *
@@ -7,14 +6,15 @@ from models import *
 #ЧК Пользователя
 @app.route("/user", methods = ["POST", "GET"])
 def user():
-  if request.methods == "POST":
+  if request.method == "POST":
     user_id = request.form.get()
 
-  return jsonify(db.session.query(User).get(user_id))
+  if request.method == "GET":
+    return jsonify(db.session.query(User).get(user_id))
 
 @app.route("/register", methods = ["POST", "GET"])
 def register():
-  if request.methods == "POST":
+  if request.method == "POST":
       reg_username = request.form.get()
       reg_password = request.form.get()
       reg_group_id = request.form.get()
@@ -29,11 +29,12 @@ def register():
 
   #Если status == False, тo это значит, что пользователь с таким именем уже существует.
   #Если status == (то, что ввёл пользователь), то это значит, что регистрация прошла успешно (если мы конечно ещё где-то не облажались).
-  return jsonify(status)
+  if request.method == "GET":
+    return jsonify(status)
 
 @app.route("/login", methods = ["POST", "GET"])
 def login():
-  if request.methods == "POST":
+  if request.method == "POST":
       log_username = request.form.get()
       log_password = request.form.get()
 
@@ -48,22 +49,25 @@ def login():
 
   #Если status == False, то имя или пароль неправильные.
   #Если status == (данные из БД), то такие данные есть и пользователю можно дать право использовать эти данные.
-  return jsonify(status)
+  if request.method == "GET":
+    return jsonify(status)
 
 #ЧК Группы
 @app.route("/group", methods = ["POST", "GET"])
 def group():
-  if request.methods == "POST":
-    group_id = requests.form.get()
+  if request.method == "POST":
+    group_id = request.form.get("")
 
-  return jsonify(db.session.query(Group).get(group_id))
+  if request.method == "GET":
+    return jsonify(db.session.query(Group).get(group_id))
 
 @app.route("/timetable", methods = ["POST", "GET"])
 def timetable():
-  if request.methods == "POST":
-    timetable_id = requests.form.get()
+  if request.method == "POST":
+    timetable_id = request.form.get()
 
-  return jsonify(db.session.query(Timetable).get(timetable_id))
+  if request.method == "GET":
+    return jsonify(db.session.query(Timetable).get(timetable_id))
 
 #ЧК Социальных инструментов
 @app.route("/chat")
