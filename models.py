@@ -28,7 +28,6 @@ class Dictionary(db.Model):
     rus = db.Column(db.String, nullable = False)
     eng = db.Column(db.String, nullable = False)
     deu = db.Column(db.String, nullable = False)
-    word = db.Column(db.String, unique = True, nullable = False)
 
 class Chat(db.Model):
     __tablename__ = "chats"
