@@ -1,4 +1,5 @@
 from flask import jsonify, request
+import base64
 from core import app
 from models import *
 
@@ -17,14 +18,14 @@ def register():
   if request.method == "POST":
       reg_username = request.form.get()
       reg_password = request.form.get()
-      reg_group_id = request.form.get()
+      reg_group_id = request.form.get() 
 
       for num in range(db.session.query(User).order_by(User.id)[-1]):
         if num["username"] == reg_username:
           status = False
         else:
-          db.add(User(username = reg_username, password = reg_password, group_id = reg_group_id))
-          db.commit()
+          db.session.add(User(username = reg_username, password = reg_password, group_id = reg_group_id))
+          db.session.commit()
           status = db.session.query(User).get(User(username = reg_username, password = reg_password, group_id = reg_group_id).id)
 
   #Если status == False, тo это значит, что пользователь с таким именем уже существует.
@@ -70,13 +71,30 @@ def timetable():
     return jsonify(db.session.query(Timetable).get(timetable_id))
 
 #ЧК Социальных инструментов
-@app.route("/chat")
+@app.route("/chat", methods = ["POST", "GET"])
 def chat():
-  return jsonify("Чат")
+  if request.method == "POST":
+    mes_user = request.form.get()
+    mes_text = request.form.get()
+    mes_time = request.form.get()
 
-@app.route("/workbase")
+    db.session.add(Chat(user = mes_user, text = mes_text, time = mes_time))
+    db.session.commit()
+
+  if request.method == "GET":
+    return jsonify(db.session.query(Chat).all()) #Поменяйте потом на вывод последних (например) 100 сообщений, ибо я просто хз, как выводить строчки - в виде словаря списка или что там ещё.
+
+@app.route("/workbase", methods = ["POST", "GET"])
 def workbase():
-  return jsonify("Контрольные")
+  if request.method == "POST":
+    image_bytecode = request.form.get() #Я хз, как будут выглядить картинки, но предполагаю, что это будет base64-код.
+    image_time = request.form.get()
+
+    db.session.add(Workbase(image = image_bytecode, time = image_time))
+    db.session.commit()
+
+  if request.method == "GET":
+    return jsonify(db.session.query(Workbase).all()) #Аналогично с 85 строкой.
 
 #ЧК Словаря
 @app.route("/dictionary")

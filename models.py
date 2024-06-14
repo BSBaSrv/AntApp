@@ -36,10 +36,9 @@ class Chat(db.Model):
     user = db.Column(db.Integer, db.ForeignKey("users.id"))
     text = db.Column(db.String, nullable = False)
     time = db.Column(db.String, nullable = False)
-    user_info = db.relationship("User", backref = db.backref("chats"))
 
-class workbase(db.Model):
+class Workbase(db.Model):
     __tablename__ = "workbase"
     id = db.Column(db.Integer, primary_key = True)
-    image = db.Column(db.String, nullable = False) # <- ???
+    image = db.Column(db.String, nullable = False)
     time = db.Column(db.String, nullable = False)
